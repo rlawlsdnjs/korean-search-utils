@@ -1,6 +1,6 @@
 {
   "name": "korean-search-utils",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "한글 초성 검색 및 React 훅 지원 라이브러리",
   "type": "module",
   "main": "dist/index.js",
