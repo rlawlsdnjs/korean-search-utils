@@ -1,9 +1,13 @@
 import { useMemo, useState } from "react";
-import { isMatch, disassembleHangul } from "../utils/koreanSearchUtils";
+import {
+  isMatch,
+  disassembleHangul,
+  getMatchScore,
+} from "../utils/koreanSearchUtils";
 
 function useKoreanSearch<T>(
   items: T[],
-  getSearchField: (item: T) => string
+  getSearchField: (item: T) => string,
 ): {
   searchTerm: string;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
@@ -19,9 +23,16 @@ function useKoreanSearch<T>(
       return items;
     }
 
-    return items.filter((item) => {
+    const matched = items.filter((item) => {
       const field = getSearchField(item);
       return isMatch(field, searchTerm);
+    });
+
+    // 매칭된 항목들을 점수 순으로 정렬 (낮은 점수가 우선)
+    return matched.sort((a, b) => {
+      const scoreA = getMatchScore(getSearchField(a), searchTerm);
+      const scoreB = getMatchScore(getSearchField(b), searchTerm);
+      return scoreA - scoreB;
     });
   }, [items, searchTerm, getSearchField]);
 

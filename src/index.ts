@@ -1,2 +1,7 @@
-export { disassembleHangul, isMatch } from "./utils/koreanSearchUtils";
+export {
+  disassembleHangul,
+  isMatch,
+  getMatchStartIndex,
+  getMatchScore,
+} from "./utils/koreanSearchUtils";
 export { default as useKoreanSearch } from "./hooks/useKoreanSearch";

@@ -137,3 +137,63 @@ export const isMatch = (source: string, target: string): boolean => {
 
   return true;
 };
+
+/**
+ * 검색어가 문자열에서 매칭되는 시작 위치 인덱스를 반환
+ * @param {string} source - 대상 문자열
+ * @param {string} target - 검색어
+ * @returns {number} - 매칭 시작 인덱스 (매칭되지 않으면 -1)
+ */
+export const getMatchStartIndex = (source: string, target: string): number => {
+  if (!source || !target) {
+    return target === "" ? 0 : -1;
+  }
+
+  const src = disassembleHangul(source);
+  const tgt = disassembleHangul(target);
+
+  let i = 0;
+  let matchStartIndex = -1;
+
+  for (let j = 0; j < tgt.length; j++) {
+    const t = tgt[j];
+    let found = false;
+
+    while (i < src.length) {
+      if (src[i] === t) {
+        if (j === 0) {
+          matchStartIndex = i;
+        }
+        found = true;
+        i++;
+        break;
+      }
+      i++;
+    }
+
+    if (!found) {
+      return -1;
+    }
+  }
+
+  return matchStartIndex;
+};
+
+/**
+ * 검색어와 매칭되는 문자열의 점수를 계산
+ * 매칭 위치가 빠를수록 점수가 높음
+ * @param {string} source - 대상 문자열
+ * @param {string} target - 검색어
+ * @returns {number} - 점수 (낮을수록 상위, 매칭되지 않으면 Infinity)
+ */
+export const getMatchScore = (source: string, target: string): number => {
+  const matchIndex = getMatchStartIndex(source, target);
+
+  if (matchIndex === -1) {
+    return Infinity;
+  }
+
+  // 매칭 시작 위치가 빠를수록 낮은 점수 (우선순위 높음)
+  // 추가로 원본 문자열의 길이도 고려 (같은 위치라면 짧은 문자열이 우선)
+  return matchIndex * 1000 + source.length;
+};
